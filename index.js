@@ -16,9 +16,11 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function run () {
+    
     try{
         await client.connect();
         const productsCollection = client.db('cycleGear').collection('products');
+        const purchasedCollection = client.db('cycleGear').collection('PurchasedProducts');
 
         app.get('/product', async(req, res) => {
             const query = {};
@@ -32,7 +34,27 @@ async function run () {
             const query = {_id: ObjectId(id)};
             const product = await productsCollection.findOne(query);
             res.send(product)
-        })
+        });
+
+        app.patch('/product/:id', async(req, res) =>{
+            const id = req.params.id;
+            const {newQuantity} = req.body;
+             console.log(newQuantity)
+            const filter = {_id: ObjectId(id)};
+            const updatedDoc={
+                $set: {productQuantity: newQuantity}
+            };
+
+            const result = await productsCollection.updateOne(filter, updatedDoc);
+            res.send({result});
+        });
+
+
+        app.post('/purchased', async(req, res)=> {
+           const purchasedProduct = req.body;
+           const result = await purchasedCollection.insertOne(purchasedProduct);
+           res.send(result)
+        });
     }
     finally{
 
