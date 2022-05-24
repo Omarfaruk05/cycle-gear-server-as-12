@@ -21,12 +21,20 @@ async function run () {
         await client.connect();
         const productsCollection = client.db('cycleGear').collection('products');
         const purchasedCollection = client.db('cycleGear').collection('PurchasedProducts');
+        const reviewsCollection = client.db('cycleGear').collection('reviews');
 
         app.get('/product', async(req, res) => {
             const query = {};
             const cursor = productsCollection.find(query);
             const products = await cursor.toArray();
             res.send(products);
+        });
+        
+        app.get('/review', async(req, res) => {
+            const query = {};
+            const cursor = reviewsCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews);
         });
 
         app.get('/product/:id', async(req, res)=>{
