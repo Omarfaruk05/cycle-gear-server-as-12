@@ -46,6 +46,12 @@ async function run () {
             res.send(products);
         });
 
+        app.post('/product', async(req, res) => {
+            const product = req.body;
+            const result = await productsCollection.insertOne(product);
+            res.send(result)
+        })
+
         app.get('/user', verifyJWT, async(req, res) => {
             const users = await usersCollection.find().toArray();
             res.send(users);
