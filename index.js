@@ -65,7 +65,8 @@ async function run () {
         app.delete('/manageProduct/:id', async(req, res) => {
             const id = req.params.id;
             const filter = {_id: ObjectId(id)};
-            const cursor = productsCollection.deleteOne(filter);
+            const result = await productsCollection.deleteOne(filter);
+            res.send(result)
         });
 
         app.post('/product',verifyJWT, verifyAdmin, async(req, res) => {
@@ -156,6 +157,14 @@ async function run () {
            const purchasedProduct = req.body;
            const result = await purchasedCollection.insertOne(purchasedProduct);
            res.send(result)
+        });
+
+        app.delete('/purchased/:id', async(req, res) => {
+            const id = req.params.id;
+            const filter = {_id: ObjectId(id)};
+            const result = await purchasedCollection.deleteOne(filter);
+            res.send(result)
+
         });
     }
     finally{
